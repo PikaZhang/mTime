@@ -1,8 +1,8 @@
 <template>
-    <div>热搜</div>
+    <div> 123</div>
 </template>
 <script>
 export default {
-  
+
 }
 </script>

@@ -27,19 +27,28 @@ export default {
   padding: 0!important;
 }
 
+.MHeader {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+
 #logo {
   width: 2.13rem;
   height: 0.70rem;
-  margin-top:0.55rem;
+  margin-top: 0.55rem;
 }
 
 .vux-header .vux-header-left {
   left: 0.29rem!important;
   top: 0.59rem!important;
 }
+
 .vux-header .vux-header-left span {
-   color:#fff!important;
+  color: #fff!important;
 }
+
 .vux-header-title-area {
   text-align: center;
 }
