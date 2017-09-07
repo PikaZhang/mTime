@@ -52,11 +52,15 @@ body,
 html {
     position: relative;
     height: 100%;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 body,
 h3,
+h4,
+h1,
+h2,
+h5,
 P {
     margin: 0;
 }

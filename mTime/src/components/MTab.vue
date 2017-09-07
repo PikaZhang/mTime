@@ -1,39 +1,27 @@
 <template>
-  <div class="mTab">
-    <tab  active-color='#fff' bar-active-color='#fff' defaultColor="#fff" custom-bar-width="2.0rem">
-      <tab-item selected  @on-item-click='hot'>正在热映</tab-item>
-      <tab-item @on-item-click='soon'>即将上映</tab-item>
-
-    </tab>
-  </div>
+    <div>
+        <tab active-color='#fff' bar-active-color='#fff' defaultColor="#fff" custom-bar-width="2.0rem">
+            <tab-item selected @on-item-click="now">正在热映</tab-item>
+            <tab-item @on-item-click="soon">即将上映</tab-item>
+        </tab>
+    </div>
 </template>
 <script>
-import { Tab, TabItem } from 'vux'
+import { Tab } from 'vux'
+import { TabItem } from 'vux'
 export default {
-  components:{
-    Tab,
-    TabItem
-  },
-  methods:{
-    hot(){
-         this.$router.push('/hot')
+    props:['show'],
+    components: {
+        Tab,
+        TabItem
     },
-    soon(){
-
-         this.$router.push('/soon')
+    methods:{
+        now(){
+              this.$emit('update:show', true);
+        },
+        soon(){
+             this.$emit('update:show', false);
+        }
     }
-  }
 }
 </script>
-<style>
-.vux-tab{
-  background-color:#1c2635!important;
-  height:1.5rem!important;
-}
-.mTab {
-  position:fixed;
-  top:1.70rem;
-  left:0;
-  width:100%
-}
-</style>
