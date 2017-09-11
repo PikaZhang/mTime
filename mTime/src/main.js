@@ -4,6 +4,13 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import MuseUI from 'muse-ui'
+import 'muse-ui/dist/muse-ui.css'
+Vue.use(MuseUI)
+import VueScroller from 'vue-scroller'
+Vue.use(VueScroller)
+
+
 
 const FastClick = require('fastclick')
 FastClick.attach(document.body)

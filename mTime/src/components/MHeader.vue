@@ -1,5 +1,5 @@
 <template>
-  <div class="MHeader">
+  <div >
     <x-header class="XHeader">
       <a href="javascript:;" slot="overwrite-title">
         <img src='../assets/img/logo_mtime.png' id='logo'>
@@ -25,13 +25,6 @@ export default {
   background-color: #1c2635!important;
   height: 1.70rem;
   padding: 0!important;
-}
-
-.MHeader {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
 }
 
 #logo {
