@@ -12,6 +12,8 @@ Vue.use(VueScroller)
 
 
 
+
+
 const FastClick = require('fastclick')
 FastClick.attach(document.body)
 
@@ -25,5 +27,8 @@ new Vue({
     router,
     store,
     template: '<App/>',
-    components: { App }
+    components: {
+        App,
+
+    }
 })

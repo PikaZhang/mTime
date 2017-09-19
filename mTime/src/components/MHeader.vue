@@ -1,9 +1,6 @@
 <template>
   <div >
-    <x-header class="XHeader">
-      <a href="javascript:;" slot="overwrite-title">
-        <img src='../assets/img/logo_mtime.png' id='logo'>
-      </a>
+    <x-header class="XHeader" title="Hori-Cinema">
       <div slot='overwrite-left'>
         <span class="glyphicon glyphicon-map-marker"></span>
         <span>上海</span>
@@ -27,12 +24,6 @@ export default {
   padding: 0!important;
 }
 
-#logo {
-  width: 2.13rem;
-  height: 0.70rem;
-  margin-top: 0.55rem;
-}
-
 .vux-header .vux-header-left {
   left: 0.29rem!important;
   top: 0.59rem!important;
@@ -44,6 +35,14 @@ export default {
 
 .vux-header-title-area {
   text-align: center;
+}
+ .vux-header .vux-header-title{
+   height:1.7rem!important;
+ }
+.vux-header .vux-header-title > span{
+  font-size:0.8rem;
+  line-height:1.7rem!important;
+  color:#fff;
 }
 </style>
 

@@ -1,116 +1,106 @@
 <template>
     <div id="index">
         <m-header class="MHeader"></m-header>
-        <div ref="indexWrap" class="indexWrap">
-            <section class="section">
-                <swiper loop auto class="swiper">
-                    <swiper-item v-for="now,index in nowMovie" v-if="index<=4">
-                        <img :src="now.img" @click="$router.push({name:'Detail', params:{id:now.movieId}})">
-                    </swiper-item>
-                </swiper>
-                <div class=" commenWrap">
-                    <header @click="hotList">
-                        <h3>正在热映({{nowMovie.totalHotMovie}})</h3>
-                        <span></span>
-                    </header>
-                    <div class="wrapper" ref="wrapper">
-                        <div class="box1">
-                            <div class="box1-item" v-for="hotList,index in $store.state.hotLists" v-if="index<=10">
-                                <img :src="hotList.img" @click="$router.push({name:'Detail', params:{id:hotList.id}})">
+        <pacman-loader :loading="loading"></pacman-loader>
+        <div v-if="!loading">
+            <scroll class="indexWrap">
+                <section class="section">
+                    <swiper loop auto class="swiper" height="6rem">
+                        <swiper-item v-for="now,index in nowMovie" v-if="index<=4">
+                            <img :src="now.img" @click="$router.push({name:'Detail', params:{id:now.movieId}})">
+                        </swiper-item>
+                    </swiper>
+                    <div class=" commenWrap">
+                        <header @click="hotList">
+                            <h3>正在热映({{nowMovie.totalHotMovie}})</h3>
+                            <span></span>
+                        </header>
+                        <scroll class="wrapper" :scrollX="scrollX" :scrollY="false">
+                            <div class="box1">
+                                <div class="box1-item" v-for="hotList,index in hotLists.ms" v-if="index<=10">
+                                    <img :src="hotList.img" @click="$router.push({name:'Detail', params:{id:hotList.id}})">
+                                </div>
                             </div>
-                        </div>
+                        </scroll>
                     </div>
-                </div>
-                <div class=" commenWrap">
-                    <header @click="soonList">
-                        <h3>即将上映({{$store. state.hotLists.total}})</h3>
-                        <span></span>
-                    </header>
-                    <div class="wrapper" ref="soonList">
-                        <div class="box1">
-                            <div class="box1-item" v-for="soonList,index in $store.state.soonLists.moviecomings" v-if="index<=10">
-                                <img :src="soonList.image" @click="$router.push({name:'Detail', params:{id:soonList.id}})">
+                    <div class=" commenWrap">
+                        <header @click="soonList">
+                            <h3>即将上映({{$store. state.hotLists.totalComingMovie}})</h3>
+                            <span></span>
+                        </header>
+                        <scroll class="wrapper" :scrollX="scrollX" :scrollY="false">
+                            <div class="box1">
+                                <div class="box1-item" v-for="soonList,index in soonLists.moviecomings" v-if="index<=10">
+                                    <img :src="soonList.image" @click="$router.push({name:'Detail', params:{id:soonList.id}})">
+                                </div>
                             </div>
-                        </div>
+                        </scroll>
                     </div>
-                </div>
-            </section>
+                </section>
+            </scroll>
         </div>
     </div>
 </template>
 <script>
 import MHeader from '@/components/MHeader.vue'
+import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
 import BScroll from 'better-scroll'
+import Scroll from '@/components/Scroll.vue'
 import { Swiper, SwiperItem } from 'vux'
+import { mapState } from 'vuex'
 export default {
     data() {
         return {
-            nowMovie: {
-                totalHotMovie: ''
-            }
+            scrollX: true
         }
     },
     components: {
         MHeader,
         Swiper,
         SwiperItem,
+        PacmanLoader,
+        Scroll
 
     },
+    created() {
+        this.$store.commit('loadingFn', true);
+       
+    },
     mounted() {
-        this.$nextTick(() => {
-            this.scroll = new BScroll(this.$refs.wrapper, {
-                scrollX: true,
-            })
-        });
-        this.$nextTick(() => {
-            this.scroll = new BScroll(this.$refs.soonList, {
-                scrollX: true,
-            })
-        })
-        this.$nextTick(() => {
-            this.scroll = new BScroll(this.$refs.indexWrap, {
-                scrollY: true,
-            })
-        })
-        fetch('/api/PageSubArea/HotPlayMovies.api?locationId=292')
-            .then(response => {
-                return response.json();
-            })
-            .then(result => {
-                this.nowMovie = result.movies;
-                this.nowMovie.totalHotMovie = result.totalHotMovie
-            });
-        fetch('/api/Showtime/LocationMovies.api?locationId=292')
-            .then(response => {
-                return response.json();
-            })
-            .then(result => {
-                this.$store.commit('hotListFn', result);
-            })
-        fetch('/api/Movie/MovieComingNew.api?locationId=292')
-            .then(response => {
-                return response.json();
-            })
-            .then(result => {
-                this.$store.commit('soonListFn', result);
 
-            })
+        this.$store.commit('bottomNavFn', "index")
+        this.$store.dispatch('getHotList').then(() => {
+
+        })
+        this.$store.dispatch('getSoonList').then(() => {
+        })
+        this.$store.dispatch('getPagesubArea').then(() => {
+            setTimeout(() => {
+                this.$store.commit('loadingFn', false);
+            }, 1000)
+
+        })
+
+
+
     },
     methods: {
         hotList() {
-            this.$store.state.isShow = true;
-            this.$router.push({ name: 'Home' });
-            //  this.$store.dispatch('hot', this.$store.state.isShow)
-            //     .then(data => {
-            //             this.$store.commit('hotFn', true);
-            //     });
+            this.$store.commit('hotFn', true)
+            this.$router.push({ name: 'Hot' });
         },
         soonList() {
-            this.$store.state.isShow = false;
-            this.$router.push({ name: 'Home' });
-            console.log(this.$store.state.isShow)
+            this.$store.commit('hotFn', false)
+            this.$router.push({ name: 'Soon' });
+
         }
-    }
+    },
+    computed: mapState([
+        'hotLists',
+        'soonLists',
+        'nowMovie',
+        'loading'
+    ])
 
 }
 </script>
@@ -125,7 +115,8 @@ export default {
         height:170/@r;
     }
      #index{
-        padding-top:170/@r;
+        margin-top:170/@r;
+        // margin-bottom:240/@r;
     }
      .swiper{
          height:600/@r;
@@ -167,10 +158,13 @@ export default {
    
 }
 .indexWrap {
-    height:1800/@r;
+  
     overflow:hidden;
-    
-    
+    position:absolute;
+    left:0;
+    top:1.7rem;
+    bottom:2.0rem;
+    width:100%;
 }
 .box1-item {
   width: 300/@r;
@@ -188,6 +182,12 @@ export default {
 .box1-item img{
     width: 300/@r;
     height: 500/@r;
+}
+.v-spinner {
+  position: absolute;
+  left: 530/@r;
+  top: 900/@r;
+  z-index: 10;
 }
 </style>
 

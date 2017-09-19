@@ -1,48 +1,57 @@
 <template>
   <div id="app">
-    <!-- <mu-tabs :value="activeTab" @change="handleTabChange" class="muTab">
-        <mu-tab value="tab1" icon="home" title="首页" @click="$router.push({name:'Index'})"/>
-        <mu-tab value="tab2" icon="shop" title="购票" @click="$router.push({name:'Home'})" />
-        <mu-tab value="tab3" icon="face" title="我的" @click="$router.push({name:'Login '})"/>
-      </mu-tabs> -->
-    <mu-paper style="max-width: 376px; " class="muTab">
-      <mu-bottom-nav :value="bottomNav" shift @change="handleChange">
-        <mu-bottom-nav-item value="tab1" title="首页" icon="home" to="/index" selected/>
-        <mu-bottom-nav-item value="tab2" title="购票" icon="shop" to="/home"/>
-        <mu-bottom-nav-item value="tab3" title="我的" icon="face" to="/login"/>
+    <mu-paper class="muTab">
+      <mu-bottom-nav :value="this.$store.state.bottomNav" shift @change="handleChange">
+        <mu-bottom-nav-item value="index" title="首页" icon="home" to="/index" />
+        <mu-bottom-nav-item value="hot" title="购票" icon="shop" to="/hot" @click.native="hot" />
+
+        <mu-bottom-nav-item value="login" title="我的" icon="face" @click.native="change" />
+
       </mu-bottom-nav>
     </mu-paper>
+
+    <!-- <pulse-loader :loading="isLoading"></pulse-loader> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-
-import { Loading } from 'vux'
 import { mapState } from 'vuex'
-
+// import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 export default {
   name: 'app',
-  components: {
-    Loading
-  },
-  computed: {
-    ...mapState({
-      isLoading: state => state.vux.isLoading
-    })
-  },
   data() {
     return {
-      bottomNav: 'tab1',
       // bottomNavColor: 'movies'
     }
   },
   methods: {
     handleChange(val) {
       this.bottomNav = val
-    }
-  }
+    },
+    hot() {
+      this.$store.commit('hotFn', true);
+    },
+    change() {
+      console.log(window.sessionStorage.getItem('loginStatus'))
+      if (window.sessionStorage.getItem('loginStatus')=="true") {
+        this.$router.push({
+          path: '/my'
+        });
+      } else {
+        this.$router.push({
+          path: '/login'
+        });
+      }
+    },
+  },
+  components: {
+    // PulseLoader
+  },
+  computed: mapState([
+    "isLogin"
+  ])
 }
 </script>
 
@@ -52,12 +61,29 @@ export default {
   position: fixed;
   bottom: 0;
   left: 0;
-  width:100%;
-  z-index:3;
+  right: 0;
+  z-index: 3;
 }
 
 #app {
   height: 100%;
+}
+
+.mu-bottom-nav-shift {
+  background: #000;
+  height: 1.7rem!important;
+}
+
+.mu-icon {
+  font-size: 0.7rem;
+}
+
+.mu-bottom-item-active .mu-bottom-item-text {
+  font-size: 0.5rem;
+}
+
+.mu-bottom-item-icon {
+  width: 0.7rem;
 }
 </style>
 

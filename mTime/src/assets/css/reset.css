@@ -20,7 +20,7 @@ input {
 
 body * {
     -webkit-text-size-adjust: 100%;
-    font-size: 0.12rem;
+    /* font-size: 0.12rem; */
 }
 
 a {

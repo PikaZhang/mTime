@@ -1,32 +1,18 @@
 <template>
   <div id="detail">
     <pacman-loader :loading="loading"></pacman-loader>
-
-    <div class="fixedBuyWrap" v-show="!isFix" ref="fixBuy">
-      <div class="fixBuy fixedBuy">
-        <span>查讯息/购票</span>
-      </div>
-    </div>
     <div v-if="!loading">
-      <div class="detailwrap" ref="detailwrap">
-        <div ref="dataHeight">
+      <scroll class="detailwrap" :pulldown="pulldown" @pulldown='fn'>
+        <div>
           <header>
             <a href="javascript:;" @click="back" class="back">
               <span></span>
             </a>
-
-            <a href="javascript:;" class="share">
+            <a href="" class="collection">
               <span></span>
             </a>
-            <a href="javascript:;" class="collection" @click="star">
-              <div v-if="loginStatus()">
-                <span v-show='isStar'></span>
-                <span v-show='!isStar'></span>
-              </div>
-              <div v-else>
-                <span></span>
-              </div>
-
+            <a href="" class="share">
+              <span></span>
             </a>
           </header>
           <div class="detailBg">
@@ -46,7 +32,7 @@
                 <p class="type">
                   <strong v-for="type in details.type">{{type}}</strong>
                 </p>
-                <p class="onTime">{{details.release.date}}{{details.release.location}}上映</p>
+                <p class="onTime">{{details.release.date|formatDate('y年m月d日')}}{{details.release.location}}上映</p>
                 <p class="button">
                   <span>我想看</span>
                   <span>我要评分</span>
@@ -56,7 +42,7 @@
             </div>
             <p class="describe">
               <span></span>{{details.commonSpecial}}</p>
-            <div class="fixBuy" ref="fixBuy">
+            <div class="fixBuy">
               <span>查讯息/购票</span>
             </div>
 
@@ -139,17 +125,16 @@
           <p class="line"></p>
           <div class=" commenWrap miniComment">
             <header>
-              <h3>网友影评({{commentMini.totalCount}})</h3>
+              <h3>网友影评({{commentMini.data.totalCount}})</h3>
             </header>
 
             <ul class="commentUser " id="miniContent">
-              <li v-for="mini in commentMini.cts">
+              <li v-for="mini in commentMini.data.cts">
                 <img :src="mini.caimg">
                 <div class="commentUserContent">
                   <div class="header">
                     <h5>{{mini.ca}}</h5>
-                    <p>{{(mini.cd - 3600 * 8)*1000|formatSoon('y-m-d H:i:s')}}
-                      <span v-if="mini.cr !=0">-评</span>
+                    <p>{{(mini.cd - 3600 * 8)*1000|formatSoon('y-m-d H:i:s')}}-评
                       <span v-if="mini.cr !=0">{{mini.cr|format}}</span>
                     </p>
                   </div>
@@ -164,24 +149,15 @@
                 </div>
               </li>
             </ul>
-
+            <div class="loading-wrapper"></div>
           </div>
-          <clip-loader :loading="pullupLoading" class="clipLoad"></clip-loader>
-          <div class="loading-wrapper" ref="loading">
-
-          </div>
-
-          <div class="con"></div>
         </div>
-      </div>
-
+      </scroll>
     </div>
-
   </div>
 </template>
 <script>
 import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
-import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
 import formatSoon from '@/filters/formatSoon.js'
 import formatDate from '@/filters/formatDate.js'
 import strLength from '@/filters/strLength.js'
@@ -190,83 +166,35 @@ import praise from '@/filters/praise.js'
 import BScroll from 'better-scroll'
 import { mapState } from 'vuex'
 import Scroll from '@/components/Scroll.vue'
-
 export default {
   data() {
     return {
       showCon: true,
-      pageCount: 1,
-      pullupLoading: false,
-      isStar: true,
-      isFix: true
+      pulldown: true
     }
-  },
+   },
+  // created() {
+  //   this.loadData()
+  // },
   mounted() {
-    let height = this.$refs.dataHeight
     let id = this.$route.params.id;
-    let fixBuy = this.$refs.fixBuy
-    let fixBuyHeihgt = fixBuy.getBoundingClientRect().top
     this.$store.commit('loadingFn', true);
     this.$store.commit('bottomNavFn', "hot")
     this.$store.dispatch('getDetails', id).then(() => {
       setTimeout(() => {
         this.$store.commit('loadingFn', false);
       }, 1000)
-      setTimeout(() => {
-        if (!this.scroll) {
-          this.scroll = new BScroll(this.$refs.detailwrap, {
-            click: true,
-            probeType: 3
-          })
-          this.scroll.on('scroll', () => {
-            if (this.scroll.y < -fixBuyHeihgt) {
 
-              this.isFix = false;
-            } else {
-              this.isFix = true;
-            }
-          })
-          this.scroll.on('scrollEnd', () => {
-            // 滚动到底部
-
-            if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
-              this.pullupLoading = true
-              this.$refs.loading.innerText = ''
-              setTimeout(() => {
-                this.pageCount++;
-                fetch('/api/Showtime/HotMovieComments.api?pageIndex=' + this.pageCount + '&movieId=' + id)
-                  .then(response => {
-                    return response.json();
-                  })
-                  .then(result => {
-                    let data = result.data.cts
-                    if (data == '') {
-                      this.pullupLoading = false
-                      this.$refs.loading.innerText = "没有更多数据了"
-                    } else {
-                      this.$store.state.commentMini.cts = this.$store.state.commentMini.cts.concat(data)
-                      this.pullupLoading = false
-
-                    }
-
-                    //等DOM渲染完成再重新计算高度
-                    setTimeout(() => {
-                      this.scroll.refresh()
-                    }, 200)
-                  });
-              }, 500)
-            }
-
-          })
-
-
-        }
-      }, 1000)
     })
     this.$store.dispatch('getCommentsPlus', id)
     this.$store.dispatch('getCommentsMini', id)
 
   },
+  // methods: {
+  //   loadData() {
+  //     console.log(1)
+  //   }
+  // },
   filters: {
     formatDate,
     strLength,
@@ -274,7 +202,6 @@ export default {
     formatSoon,
     format
   },
-
   methods: {
     showContent() {
       this.showCon = false;
@@ -282,37 +209,10 @@ export default {
     showContent2() {
       this.showCon = true;
     },
+
+    infinite() { },
     back() {
       this.$router.go(-1);
-    },
-    star() {
-      let collection = [];
-
-      if (window.sessionStorage.getItem('loginStatus') == "true") {
-        if (this.isStar) {
-          this.$store.commit('collectFn', this.$store.state.details.titleCn)
-          var arr = this.$store.state.collection
-          //去除重复名字
-          for (var i = 0; i < arr.length; i++) {
-            for (var j = i + 1; j < arr.length; j++) {
-              if (arr[i] == arr[j]) {
-                arr.splice(j, 1);
-              }
-            }
-          }
-          window.sessionStorage.setItem(this.$store.state.nickname, arr)
-        }else{
-
-        }
-        this.isStar = !this.isStar
-
-
-      } else {
-        alert('请先登入')
-      }
-    },
-    loginStatus() {
-      return window.sessionStorage.getItem('loginStatus') == "true"
     }
   },
   computed: mapState([
@@ -323,8 +223,7 @@ export default {
   ]),
   components: {
     PacmanLoader,
-    Scroll,
-    ClipLoader
+    Scroll
   }
 }
 </script>
@@ -336,12 +235,7 @@ export default {
 }
 
 .detailwrap {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  bottom: 2rem;
-  top: 0;
-  overflow: hidden;
+  position: relative;
 }
 
 #detail header {
@@ -368,20 +262,11 @@ export default {
 }
 
 #detail .collection span {
-  background-repeat: no-repeat;
-  background-position: center center;
+  background: url('../assets/img/i_h_collection.png') no-repeat center center;
   float: left;
   width: 150/@r;
   height: 150/@r;
   background-size: auto 80/@r;
-}
-
-#detail .collection span:nth-of-type(1) {
-  background-image: url('../assets/img/i_h_collection.png')
-}
-
-#detail .collection span:nth-of-type(2) {
-  background-image: url('../assets/img/i_star.png')
 }
 
 #detail .share span {
@@ -522,7 +407,6 @@ export default {
 }
 
 #detail .fixBuy {
-  position: relative;
   width: 100%;
   height: 160/@r;
   background: #ff8600;
@@ -531,23 +415,7 @@ export default {
   border-radius: 70/@r;
 }
 
-#detail .fixedBuyWrap {
-  padding: 0.3rem 0.58rem;
-  background: #f1f1f1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 15;
-  width: 100%
-}
-
-#detail .fixedBuy {
-
-  margin: 0;
-}
-
-#detail .fixBuy span,
-#detail .fixedBuy span {
+#detail .fixBuy span {
   display: block;
   font-size: 60/@r;
   line-height: 160/@r;
@@ -816,19 +684,12 @@ export default {
   width: 70/@r;
   height: 70/@r; // position: relative;
   // top:-8/@r;
+  background: #659d0e;
+  color: #fff;
   text-align: center;
   line-height: 70/@r;
   font-size: 40/@r;
-}
-
-.commentUser .header span:nth-of-type(1) {
-  margin-right: 10/@r;
-}
-
-.commentUser .header span:nth-of-type(2) {
-  background: #659d0e;
-  color: #fff;
-  margin-left: -20/@r
+  margin-left: 20/@r;
 }
 
 #miniContent .commentUserContent>p:nth-of-type(1) {
@@ -879,16 +740,8 @@ export default {
   height: 1rem;
 }
 
-
-.loading-wrapper {
-  position: relative;
-  height: 1rem;
-  text-align: center;
-  font-size: 50/@r;
-  line-height: 1/@r;
-}
-
-.clipLoad {
-  position: static;
+.detailwrap {
+  height: 2000/@r;
+  overflow: hidden;
 }
 </style>
