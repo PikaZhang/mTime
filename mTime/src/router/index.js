@@ -9,6 +9,8 @@ import Index from '@/components/Index.vue'
 import Hot from '@/components/Hot.vue'
 import Soon from '@/components/Soon.vue'
 import My from '@/components/My.vue'
+import Area from '@/components/Area.vue'
+import Search from '@/components/Search.vue'
 
 
 
@@ -57,6 +59,14 @@ const router = new Router({
             path: '/my',
             name: 'My',
             component: My
+        }, {
+            path: '/area',
+            name: 'Area',
+            component: Area
+        }, {
+            path: '/search',
+            name: 'Search',
+            component: Search
         }
     ]
 }); //这里可以带有路由器的配置参数

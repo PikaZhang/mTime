@@ -9,8 +9,8 @@
                         <span>({{soonLists.attention.length}})</span>
                     </div>
                     <scroll class="commonSoonWrapper" :scrollX="scrollX">
-                        <div class="box1">
-                            <div class="box1-item" v-for="attention,index in soonLists.attention" v-if="index<=10" @click="$router.push({name:'Detail', params:{id:attention.id}})">
+                        <div class="box1" ref="box1">
+                            <div class="box1-item" v-for="attention,index in soonLists.attention" v-if="index<=10" @click="$router.push({name:'Detail', params:{id:attention.id}})" ref="boxItem">
                                 <img :src="attention.image">
                                 <div class="commonContent">
                                     <h3>{{attention.title}}</h3>
@@ -33,23 +33,25 @@
                         <span>({{soonLists.moviecomings.length}})</span>
                     </div>
                     <div class="comingWrap">
-                        <p class="timeTitle">9月</p>
-                        <ul class="comingList">
-                            <li v-for="moviecoming in soonLists.moviecomings" v-if="moviecoming.rMonth==9" @click="$router.push({name:'Detail', params:{id:moviecoming.id}})">
-                                <span>{{moviecoming.rDay}}日</span>
-                                <img :src="moviecoming.image">
-                                <div class="commonContent">
-                                    <h3>{{moviecoming.title}}</h3>
-                                    <p>
-                                        <span>{{moviecoming.wantedCount}}</span>人想看-{{moviecoming.type}}</p>
-                                    <p>导演：{{moviecoming.director}}</p>
-                                    <p class="commonButton">
-                                        <span class="isTicket" v-if="moviecoming.isTicket">超前预售</span>
-                                        <span class="isVideo" v-if="moviecoming.isVideo">预告片</span>
-                                    </p>
-                                </div>
-                            </li>
-                        </ul>
+                        <div>
+                            <!-- <p class="timeTitle"></p> -->
+                            <ul class="comingList">
+                                <li v-for="moviecoming in soonLists.moviecomings"  @click="$router.push({name:'Detail', params:{id:moviecoming.id}})">
+                                    <!-- <span>{{moviecoming.rMonth}}.{{moviecoming.rDay}}</span> -->
+                                    <img :src="moviecoming.image">
+                                    <div class="commonContent">
+                                        <h3>{{moviecoming.title}}</h3>
+                                        <p>
+                                            <span>{{moviecoming.wantedCount}}</span>人想看-{{moviecoming.type}}</p>
+                                        <p>导演：{{moviecoming.director}}</p>
+                                        <p class="commonButton">
+                                            <span class="isTicket" v-if="moviecoming.isTicket">超前预售</span>
+                                            <span class="isVideo" v-if="moviecoming.isVideo">预告片</span>
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="con"></div>
                 </section>
@@ -63,25 +65,35 @@ import BScroll from 'better-scroll'
 import { mapState } from 'vuex'
 import Scroll from '@/components/Scroll.vue'
 export default {
-    data(){
-        return{
-            scrollX:true
+    data() {
+        return {
+            scrollX: true,
+            month: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
         }
     },
     created() {
         this.$store.commit('hotFn', false);
         this.$store.commit('bottomNavFn', "hot")
         this.$store.commit('loadingFn', true)
-        
+
     },
     mounted() {
-        this.$store.dispatch('getSoonList').then(() => {
+        let cityId = this.$store.state.chooseCityId
+
+        this.$store.dispatch('getSoonList', cityId).then(() => {
 
             setTimeout(() => {
                 this.$store.commit('loadingFn', false)
+
+            }, 1000)
+            setTimeout(() => {
+                let box1 = this.$refs.box1;
+                box1.style.width = (this.$refs.boxItem[0].getBoundingClientRect().width +this.$refs.boxItem[0].getBoundingClientRect().left ) * this.$refs.boxItem.length + "px";
+                console.log(box1.width)
             }, 1000)
 
         });
+
 
     },
     components: {
@@ -156,11 +168,12 @@ export default {
 }
 
 .commonSoonWrapper {
-   width:100%;
+    width: 100%;
 }
 
 .commonContent {
     float: left;
+    width:6.8rem;
 }
 
 .commonContent h3 {

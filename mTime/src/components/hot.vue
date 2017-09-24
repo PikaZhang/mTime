@@ -10,10 +10,10 @@
                         <img :src=hotList.img class="hotImg">
                         <div class="hotContent">
                             <h3>{{hotList.t}}
-                                <span class="score">{{hotList.r|format}}</span>
+                                <span class="score" v-if="hotList.r!=-1">{{hotList.r|format}}</span>
                             </h3>
-                            <p>
-                                <span></span>{{hotList.commonSpecial}}</p>
+                            <p style="min-height:0.48rem;">
+                                <span v-if="hotList.commonSpecial"></span>{{hotList.commonSpecial}}</p>
                             <p class="tag">
                                 <span v-for='ver in hotList.versions'>{{ver.version}}</span>
                             </p>
@@ -23,6 +23,7 @@
                             </p>
 
                         </div>
+                        <span class="hotBuy">购票</span>
                         <!-- </router-link> -->
                     </li>
                 </ul>
@@ -50,7 +51,8 @@ export default {
         
     },
     mounted() {
-        this.$store.dispatch('getHotList').then(() => {
+        let cityId=this.$store.state.chooseCityId
+        this.$store.dispatch('getHotList',cityId).then(() => {
             setTimeout(() => {
                 this.$store.commit('loadingFn', false)
             }, 1000)
@@ -84,6 +86,7 @@ export default {
     overflow: hidden;
     border-bottom: 1px solid #ddd;
     margin-left: 0.58rem;
+    position: relative;
 }
 
 .hotList>a {
@@ -165,5 +168,18 @@ export default {
 
 .con {
     height: 1.5rem;
+}
+.hotBuy{
+    position: absolute;
+    right: 1rem;
+    bottom:0.5rem;
+    width:2rem;
+    height:1rem;
+    font-size:0.5rem;
+    text-align: center;
+    line-height:1rem;
+    background: #ff6600;
+    color:#fff;
+    border-radius:0.5rem;
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
     <div id="index">
-        <m-header class="MHeader"></m-header>
+        <m-header class="MHeader" :title="title">
+        </m-header>
         <pacman-loader :loading="loading"></pacman-loader>
         <div v-if="!loading">
             <scroll class="indexWrap">
@@ -51,7 +52,8 @@ import { mapState } from 'vuex'
 export default {
     data() {
         return {
-            scrollX: true
+            scrollX: true,
+            title: "hori-cinema"
         }
     },
     components: {
@@ -64,17 +66,15 @@ export default {
     },
     created() {
         this.$store.commit('loadingFn', true);
-       
+
     },
     mounted() {
-
+        let cityId=this.$store.state.chooseCityId
+        console.log(cityId)
         this.$store.commit('bottomNavFn', "index")
-        this.$store.dispatch('getHotList').then(() => {
-
-        })
-        this.$store.dispatch('getSoonList').then(() => {
-        })
-        this.$store.dispatch('getPagesubArea').then(() => {
+        this.$store.dispatch('getHotList',cityId)
+        this.$store.dispatch('getSoonList',cityId)
+        this.$store.dispatch('getPagesubArea',cityId).then(() => {
             setTimeout(() => {
                 this.$store.commit('loadingFn', false);
             }, 1000)
@@ -157,8 +157,7 @@ export default {
     width:3470/@r;
    
 }
-.indexWrap {
-  
+.indexWrap { 
     overflow:hidden;
     position:absolute;
     left:0;

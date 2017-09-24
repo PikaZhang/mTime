@@ -25,13 +25,18 @@ const store = new Vuex.Store({
             isLogin: false,
             //昵称
             nickname: '',
-            collection: []
+            collection: [],
+            //定位
+            area: '',
+            chooseCity: '上海',
+            chooseCityId: '292',
+            searchList:''
         },
         actions: {
             //首页轮播图
-            getPagesubArea({ commit }) {
+            getPagesubArea({ commit }, cityId) {
                 return new Promise(function(resolve) {
-                    fetch('/api/PageSubArea/HotPlayMovies.api?locationId=292')
+                    fetch('/api/PageSubArea/HotPlayMovies.api?locationId=' + cityId)
                         .then(response => {
                             return response.json();
                         })
@@ -42,9 +47,9 @@ const store = new Vuex.Store({
                 })
             },
             //即将上瘾
-            getSoonList({ commit }) {
+            getSoonList({ commit }, cityId) {
                 return new Promise(function(resolved) {
-                    fetch('/api/Movie/MovieComingNew.api?locationId=292')
+                    fetch('/api/Movie/MovieComingNew.api?locationId=' + cityId)
                         .then(response => {
                             return response.json();
                         })
@@ -55,9 +60,9 @@ const store = new Vuex.Store({
                 })
             },
             //热门
-            getHotList({ commit }) {
+            getHotList({ commit }, cityId) {
                 return new Promise(function(resolved) {
-                    fetch('/api/Showtime/LocationMovies.api?locationId=292')
+                    fetch('/api/Showtime/LocationMovies.api?locationId=' + cityId)
                         .then(response => {
                             return response.json();
                         })
@@ -68,9 +73,9 @@ const store = new Vuex.Store({
                 })
             },
             //详情
-            getDetails({ commit }, id) {
+            getDetails({ commit }, detailObj) {
                 return new Promise(function(resolved) {
-                    fetch('/api/movie/detail.api?locationId=292?&movieId=' + id)
+                    fetch('/api/movie/detail.api?locationId=' + detailObj.cityId + '?&movieId=' + detailObj.id)
                         .then(response => {
                             return response.json();
                         })
@@ -104,6 +109,32 @@ const store = new Vuex.Store({
                             commit('commentMiniFn', result)
                             resolved()
                         });
+                })
+            },
+            //定位
+            getArea({ commit }) {
+                return new Promise(function(resolved) {
+                    fetch('/api/Showtime/HotCitiesByCinema.api')
+                        .then(response => {
+                            return response.json();
+                        })
+                        .then(result => {
+                            commit('areaFn', result)
+                            resolved()
+                        })
+                })
+            },
+            //搜索
+            getSearch({commit},value){
+                return new Promise(function(resolved) {
+                    fetch('/sear/Service/callback.mi/Showtime/SearchVoice.api?keyword='+value+'&pageIndex=1')
+                        .then(response => {
+                            return response.json();
+                        })
+                        .then(result => {
+                            commit('searchFn', result)
+                            resolved()
+                        })
                 })
             }
         },
@@ -140,14 +171,26 @@ const store = new Vuex.Store({
             },
             loginFn(state, result) {
                 state.isLogin = result
-                console.log(state.isLogin)
+
             },
             collectFn(state, result) {
                 state.collection.push(result)
-                console.log(state.collection)
             },
             nicknameFn(state, result) {
                 state.nickname = result
+            },
+            areaFn(state, result) {
+                state.area = result.p;
+            },
+            chooseCityFn(state, result) {
+                state.chooseCity = result;
+            },
+            chooseCityIdFn(state, result) {
+                state.chooseCityId = result;
+            },
+            searchFn(state,result){
+                state.searchList = result.movies
+                console.log(state.searchList)
             }
         }
     }) // 这里你可能已经有其他 module

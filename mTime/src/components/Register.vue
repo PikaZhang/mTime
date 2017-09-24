@@ -57,7 +57,7 @@ export default {
 
                 var storage = window.sessionStorage;
                 storage.setItem(this.usernameVal, this.passwordVal);
-                // storage.setItem("name", this.nameVal);
+                 storage.setItem("nickname", this.$store.state.nickname);
                 this.texts = '注册成功';
                 this.isShow = true;
                 setTimeout(() => {

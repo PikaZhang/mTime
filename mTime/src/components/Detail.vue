@@ -11,6 +11,7 @@
       <div class="detailwrap" ref="detailwrap">
         <div ref="dataHeight">
           <header>
+            <!-- 返回 -->
             <a href="javascript:;" @click="back" class="back">
               <span></span>
             </a>
@@ -18,16 +19,22 @@
             <a href="javascript:;" class="share">
               <span></span>
             </a>
+            <!-- 星星 -->
             <a href="javascript:;" class="collection" @click="star">
               <div v-if="loginStatus()">
                 <span v-show='isStar'></span>
                 <span v-show='!isStar'></span>
               </div>
               <div v-else>
-                <span></span>
-              </div>
+                <span @click="open" label="dialog"></span>
 
+              </div>
             </a>
+            <!-- dialog组件 -->
+            <mu-dialog :open="dialog" title="请先登入！！！" @close="close">
+              <mu-flat-button slot="actions" @click="close" primary label="取消" />
+              <mu-flat-button slot="actions" primary @click="close" label="确定" />
+            </mu-dialog>
           </header>
           <div class="detailBg">
             <span :style="{backgroundImage:'url('+details.image+')'}"></span>
@@ -46,7 +53,7 @@
                 <p class="type">
                   <strong v-for="type in details.type">{{type}}</strong>
                 </p>
-                <p class="onTime">{{details.release.date}}{{details.release.location}}上映</p>
+                <p class="onTime" v-if="details.release.date">{{details.release.date|formatDate('y年m月d日')}}{{details.release.location}}上映</p>
                 <p class="button">
                   <span>我想看</span>
                   <span>我要评分</span>
@@ -198,17 +205,21 @@ export default {
       pageCount: 1,
       pullupLoading: false,
       isStar: true,
-      isFix: true
+      isFix: true,
+      dialog: false
     }
   },
   mounted() {
-    let height = this.$refs.dataHeight
-    let id = this.$route.params.id;
+  
+    let detailObj = {};
+    let id = this.$route.params.id
+    detailObj.id = this.$route.params.id;
+    detailObj.cityId = this.$store.state.chooseCityId
     let fixBuy = this.$refs.fixBuy
     let fixBuyHeihgt = fixBuy.getBoundingClientRect().top
     this.$store.commit('loadingFn', true);
     this.$store.commit('bottomNavFn', "hot")
-    this.$store.dispatch('getDetails', id).then(() => {
+    this.$store.dispatch('getDetails', detailObj).then(() => {
       setTimeout(() => {
         this.$store.commit('loadingFn', false);
       }, 1000)
@@ -301,18 +312,24 @@ export default {
             }
           }
           window.sessionStorage.setItem(this.$store.state.nickname, arr)
-        }else{
+        } else {
 
         }
         this.isStar = !this.isStar
 
 
       } else {
-        alert('请先登入')
+
       }
     },
     loginStatus() {
       return window.sessionStorage.getItem('loginStatus') == "true"
+    },
+    open() {
+      this.dialog = true
+    },
+    close() {
+      this.dialog = false
     }
   },
   computed: mapState([
@@ -329,566 +346,6 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-@r: 100rem;
-#detail {
-  font-family: '微软雅黑';
-}
-
-.detailwrap {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  bottom: 2rem;
-  top: 0;
-  overflow: hidden;
-}
-
-#detail header {
-  overflow: hidden;
-  position: relative;
-  z-index: 2;
-}
-
-#detail header a {
-  float: left;
-}
-
-#detail .back span {
-  background: url('../assets/img/h_btn_back.png') no-repeat center center;
-  float: left;
-  width: 150/@r;
-  height: 150/@r;
-  background-size: auto 80/@r;
-}
-
-#detail header a:nth-of-type(2),
-#detail header a:nth-of-type(3) {
-  float: right;
-}
-
-#detail .collection span {
-  background-repeat: no-repeat;
-  background-position: center center;
-  float: left;
-  width: 150/@r;
-  height: 150/@r;
-  background-size: auto 80/@r;
-}
-
-#detail .collection span:nth-of-type(1) {
-  background-image: url('../assets/img/i_h_collection.png')
-}
-
-#detail .collection span:nth-of-type(2) {
-  background-image: url('../assets/img/i_star.png')
-}
-
-#detail .share span {
-  background: url('../assets/img/i_h_share.png') no-repeat center center;
-  float: left;
-  width: 150/@r;
-  height: 150/@r;
-  background-size: auto 80/@r;
-}
-
-#detail .detailBg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 400/@r;
-  overflow: hidden;
-}
-
-#detail .detailBg span:nth-of-type(1) {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: 100% auto;
-  filter: blur(10px);
-  z-index: 1;
-}
-
-#detail .detailBg span:nth-of-type(2) {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: 100% auto;
-  filter: blur(5px);
-  z-index: 0;
-  transform: scale(1.2)
-}
-
-#detail .content {
-  overflow: hidden;
-}
-
-#detail .img {
-  float: left;
-}
-
-#detail .img img {
-  width: 407/@r;
-  height: 612/@r;
-  border: 8/@r solid #fff;
-}
-
-#detail .wrap {
-  padding: 0 58/@r;
-  position: relative;
-  z-index: 2; // background:#fff;
-}
-
-#detail .text {
-  float: left;
-  margin-left: 40/@r;
-  width: 666/@r;
-}
-
-#detail .text h3 {
-  margin-top: 40/@r;
-  color: #fff;
-  font-size: 64/@r;
-  line-height: 1;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-#detail .text .subTitle {
-  color: #fff;
-  margin-top: 30/@r;
-  font-size: 40/@r;
-  line-height: 1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-#detail .text .time {
-  margin-top: 100/@r;
-  font-size: 50/@r;
-  font-weight: bold;
-  line-height: 1;
-}
-
-#detail .text .type {
-  margin-top: 30/@r;
-  font-size: 50/@r;
-  font-weight: bold;
-  line-height: 1;
-}
-
-#detail .text .onTime {
-  margin-top: 30/@r;
-  font-size: 50/@r;
-  font-weight: bold;
-  line-height: 1;
-}
-
-#detail .button {
-  margin-top: 30/@r;
-}
-
-#detail .button span {
-  display: inline-block;
-  font-size: 50/@r;
-  line-height: 128/@r;
-  width: 310/@r;
-  text-align: center;
-  border: 1px solid #999;
-  border-radius: 67/@r;
-  margin-right: 15/@r;
-}
-
-#detail .describe {
-  color: #ff8600;
-  text-align: center;
-  margin-top: 35/@r;
-  font-size: 48/@r;
-}
-
-#detail .describe span {
-  display: inline-block;
-  width: 50/@r;
-  height: 48/@r;
-  background: url('../assets/img/i_dot.png');
-  background-size: 100% 100%;
-  margin-right: 2px;
-}
-
-#detail .fixBuy {
-  position: relative;
-  width: 100%;
-  height: 160/@r;
-  background: #ff8600;
-  text-align: center;
-  margin: 58/@r 0 108/@r;
-  border-radius: 70/@r;
-}
-
-#detail .fixedBuyWrap {
-  padding: 0.3rem 0.58rem;
-  background: #f1f1f1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 15;
-  width: 100%
-}
-
-#detail .fixedBuy {
-
-  margin: 0;
-}
-
-#detail .fixBuy span,
-#detail .fixedBuy span {
-  display: block;
-  font-size: 60/@r;
-  line-height: 160/@r;
-  color: #fff;
-}
-
-#detail .line {
-  height: 48/@r;
-  background: #f6f6f6;
-}
-
-#detail .comment {
-  // height: 340/@r;
-  padding: 42/@r 58/@r 0;
-}
-
-#detail .comment p {
-  font-size: 54/@r;
-  line-height: 80/@r;
-}
-
-#detail .commentFalse span {
-  display: block;
-  width: 100%;
-  height: 120/@r;
-  background: url('../assets/img/i-tmore.png') no-repeat center center;
-  background-size: 70/@r 30/@r;
-}
-
-#detail .commentTrue span {
-  display: block;
-  width: 100%;
-  height: 120/@r;
-  background: url('../assets/img/i-tmore1.png') no-repeat center center;
-  background-size: 70/@r 30/@r;
-}
-
-#detail .line:nth-of-type(3) {
-  margin-top: 20/@r;
-}
-
-.commenWrap {
-  padding: 0 58/@r;
-}
-
-.commenWrap header {
-  height: 206/@r;
-}
-
-.commenWrap h3 {
-  float: left;
-  font-size: 64/@r;
-  line-height: 186/@r;
-  font-weight: bold;
-}
-
-.commenWrap header span {
-  float: right;
-  background: url('../assets/img/i-tmore-right.png') no-repeat center center;
-  width: 50/@r;
-  height: 54/@r;
-  background-size: 90/@r 54/@r;
-  margin: 80/@r 30/@r 0 0;
-}
-
-.actorContent {
-  padding-bottom: 20/@r;
-  overflow: hidden;
-}
-
-.actorContent .director {
-  float: left;
-  width: 365/@r;
-  padding: 0 33/@r 0 0; // border-right:2px solid #d8d8d8; 
-}
-
-.actorContent .director span,
-.actors h4 {
-  display: block;
-  font-size: 48/@r;
-  height: 66/@r;
-}
-
-.actorContent .director img {
-  width: 332/@r;
-  height: 441/@r;
-}
-
-.actorContent .director h4 {
-  margin-top: 94/@r;
-  font-size: 46/@r;
-  line-height: 1;
-  color: #000;
-  padding-left: 8/@r;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.actorContent .director p {
-  text-align: center;
-  width: 230/@r;
-}
-
-.actorContent .director p,
-.actors p:nth-of-type(1) {
-  margin-top: 20/@r;
-  font-size: 36/@r;
-  line-height: 44/@r;
-  color: #000;
-  padding-left: 8/@r;
-}
-
-.actors {
-  float: left;
-  width: 761/@r;
-  padding-left: 35/@r;
-  border-left: 1px solid #d8d8d8;
-}
-
-.actors ul {
-  overflow: hidden;
-}
-
-.actors ul li {
-  float: left;
-  width: 332/@r;
-  text-align: center;
-}
-
-.actors ul li:nth-of-type(1) {
-  margin-right: 58/@r;
-}
-
-.actors .actorImg {
-  width: 332/@r;
-  height: 332/@r;
-}
-
-.actors ul h3 {
-  margin-top: 32/@r;
-  font-size: 46/@r;
-  line-height: 1;
-  color: #000;
-  width: 100%;
-  float: none;
-}
-
-.actors p:nth-of-type(1) {
-  margin-top: 40/@r;
-  height: 90/@r;
-}
-
-.actors .roleImg {
-  width: 156/@r;
-  height: 156/@r;
-  border-radius: 50%;
-  margin: 30/@r 0;
-}
-
-.actors p:nth-of-type(2) {
-  height: 100/@r;
-  font-size: 40/@r;
-}
-
-.imageWrap {
-  padding-bottom: 110/@r;
-}
-
-.imageList {
-  overflow: hidden;
-}
-
-.imageList li {
-  padding: 0 12/@r;
-  float: left;
-}
-
-.imageList li img {
-  width: 250/@r;
-  height: 250/@r;
-  border: 1px solid #ccc;
-}
-
-.commenWrap h4 {
-  font-size: 58/@r;
-  line-height: 1;
-  font-weight: bold;
-}
-
-.commenWrap>p {
-  margin-top: 40/@r;
-  font-size: 55/@r;
-  line-height: 80/@r;
-}
-
-.commentUser {
-  overflow: hidden;
-  margin: 40/@r 0;
-}
-
-
-.commentUser img {
-  float: left;
-  width: 155/@r;
-  height: 155/@r;
-  border: 1px solid #ccc;
-  border-radius: 50%;
-}
-
-.commentUser .commentUserContent {
-  float: left;
-  margin-left: 50/@r;
-  color: #777;
-  width: 900/@r;
-}
-
-.commentUser .commentUserContent h5,
-.commentUser .commentUserContent p {
-  font-size: 50/@r;
-}
-
-.commentUser .commentUserContent h5 {
-  margin-top: 30/@r;
-}
-
-.commentUser .commentUserContent p {
-  margin-top: 10/@r;
-}
-
-.miniComment li {
-  overflow: hidden;
-  padding: 40/@r 0 50/@r;
-  border-bottom: 1px solid #ccc;
-}
-
-.miniComment li:nth-of-type(1) {
-  padding-top: 0;
-}
-
-#miniContent .commentUserContent .header {
-  height: 70/@r;
-  line-height: 50/@r;
-  margin-top: 30/@r;
-}
-
-#miniContent .commentUserContent h5 {
-  float: left;
-  width: 270/@r;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin: 0;
-  height: 70/@r;
-  font-size: 50/@r;
-}
-
-#miniContent .header p {
-  float: right;
-  margin: 0;
-  line-height: 1;
-}
-
-.commentUser .header span {
-  display: inline-block;
-  width: 70/@r;
-  height: 70/@r; // position: relative;
-  // top:-8/@r;
-  text-align: center;
-  line-height: 70/@r;
-  font-size: 40/@r;
-}
-
-.commentUser .header span:nth-of-type(1) {
-  margin-right: 10/@r;
-}
-
-.commentUser .header span:nth-of-type(2) {
-  background: #659d0e;
-  color: #fff;
-  margin-left: -20/@r
-}
-
-#miniContent .commentUserContent>p:nth-of-type(1) {
-  margin-top: 50/@r;
-  color: #000;
-}
-
-#miniContent .reply {
-  overflow: hidden;
-  text-align: right;
-  margin-top: 30/@r;
-  height: 60/@r;
-}
-
-#miniContent .reply span,
-#miniContent .reply i {
-  display: inline-block;
-  vertical-align: top;
-  font-size: 50/@r;
-  line-height: 60/@r;
-}
-
-#miniContent .reply span {
-  margin-right: 60/@r;
-}
-
-#miniContent .reply i {
-  width: 60/@r;
-  height: 60/@r;
-  background: url('../assets/img/ico_reply.png') no-repeat;
-  background-size: 60/@r 60/@r;
-  margin-right: 2px;
-}
-
-#miniContent .reply i:nth-of-type(2) {
-  background: url('../assets/img/ico_praise.png') no-repeat;
-  background-size: 60/@r 60/@r;
-}
-
-.v-spinner {
-  position: absolute;
-  left: 500/@r;
-  top: 1100/@r;
-  z-index: 10;
-}
-
-.con {
-  height: 1rem;
-}
-
-
-.loading-wrapper {
-  position: relative;
-  height: 1rem;
-  text-align: center;
-  font-size: 50/@r;
-  line-height: 1/@r;
-}
-
-.clipLoad {
-  position: static;
-}
+<style lang="less">
+@import '../assets/css/detail.less';
 </style>
