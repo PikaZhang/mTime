@@ -64,4 +64,10 @@ vue,vuex,vue-router,better-scroll,fetch,muse-ui,webpack,vue-scroller,vux,vue-spi
 > 9. 接口获取方式采用fetch,jsonp和后端代理，解决跨域问题
 
 
+# 实现功能一览
+
+## 跨域请求数据 => 已设置后端代理
+- [x] fetch
+
+## 注册登入
 
