@@ -9,23 +9,15 @@
 
       </mu-bottom-nav>
     </mu-paper>
-
-    <!-- <pulse-loader :loading="isLoading"></pulse-loader> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-// import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 export default {
   name: 'app',
-  data() {
-    return {
-      // bottomNavColor: 'movies'
-    }
-  },
   methods: {
     handleChange(val) {
       this.bottomNav = val
@@ -34,7 +26,6 @@ export default {
       this.$store.commit('hotFn', true);
     },
     change() {
-      console.log(window.sessionStorage.getItem('loginStatus'))
       if (window.sessionStorage.getItem('loginStatus')=="true") {
         this.$router.push({
           path: '/my'
@@ -46,9 +37,7 @@ export default {
       }
     },
   },
-  components: {
-    // PulseLoader
-  },
+
   computed: mapState([
     "isLogin"
   ])
@@ -71,7 +60,7 @@ export default {
 
 .mu-bottom-nav-shift {
   background: #000;
-  height: 1.7rem!important;
+  height: 1.9rem!important;
 }
 
 .mu-icon {

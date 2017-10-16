@@ -89,7 +89,6 @@ export default {
             setTimeout(() => {
                 let box1 = this.$refs.box1;
                 box1.style.width = (this.$refs.boxItem[0].getBoundingClientRect().width +this.$refs.boxItem[0].getBoundingClientRect().left ) * this.$refs.boxItem.length + "px";
-                console.log(box1.width)
             }, 1000)
 
         });
@@ -262,10 +261,12 @@ export default {
 }
 
 .v-spinner {
-    position: absolute;
-    left: 500/@r;
-    top: 1100/@r;
+    position: absolute!important;
+    left: 50%;
+    top: 50%;
     z-index: 10;
+    margin-top:-25/@r;
+    margin-left: -100/@r;
 }
 
 .con {

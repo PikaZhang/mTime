@@ -183,10 +183,12 @@ export default {
     height: 500/@r;
 }
 .v-spinner {
-  position: absolute;
-  left: 530/@r;
-  top: 900/@r;
-  z-index: 10;
+    position: absolute!important;
+    left: 50%;
+    top: 50%;
+    z-index: 10;
+    margin-top:-25/@r;
+    margin-left: -100/@r;
 }
 </style>
 

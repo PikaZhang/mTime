@@ -61,7 +61,7 @@
               </div>
 
             </div>
-            <p class="describe">
+            <p class="describe" v-if="details.commonSpecial">
               <span></span>{{details.commonSpecial}}</p>
             <div class="fixBuy" ref="fixBuy">
               <span>查讯息/购票</span>
