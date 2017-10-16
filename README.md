@@ -88,8 +88,7 @@ vue,vuex,vue-router,better-scroll,fetch,muse-ui,webpack,vue-scroller,vux,vue-spi
        - 登录:/login
        - 注册:/register
 
-> 8. 首页，以及预告片/花絮页面，实现上拉加载更多
-> 9. 接口获取方式采用fetch和后端代理，解决跨域问题
+> 8. 接口获取方式采用fetch和后端代理，解决跨域问题
 
 
 ## 一些注意事项
