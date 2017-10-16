@@ -45,7 +45,6 @@
 <script>
 import MHeader from '@/components/MHeader.vue'
 import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
-import BScroll from 'better-scroll'
 import Scroll from '@/components/Scroll.vue'
 import { Swiper, SwiperItem } from 'vux'
 import { mapState } from 'vuex'

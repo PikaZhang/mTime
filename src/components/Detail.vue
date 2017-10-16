@@ -173,7 +173,7 @@
             </ul>
 
           </div>
-          <clip-loader :loading="pullupLoading" class="clipLoad"></clip-loader>
+          <clip-loader :loading="pullupLoading" id="clipLoad"></clip-loader>
           <div class="loading-wrapper" ref="loading">
 
           </div>
@@ -265,7 +265,7 @@ export default {
                       this.scroll.refresh()
                     }, 200)
                   });
-              }, 500)
+              }, 1000)
             }
 
           })
