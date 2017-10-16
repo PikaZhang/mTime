@@ -131,6 +131,13 @@ vue,vuex,vue-router,better-scroll,fetch,muse-ui,webpack,vue-scroller,vux,vue-spi
                             commit('areaFn', result)
 ```
 
+关于Ios上时间显示NAN的问题的解决
+```
+new data(value)
+这里的VALUe如果是20XX-X-XX的格式的话 手机端会显示NAN
+在处理value 时 先将20XX-X-XX 写成20XX/XX/XX 可以解决
+```
+
 `vuex`状态管理位于`src/components/store`目录下
 
 `vue-router`路由配置管理位于`src/components/router`目录下
