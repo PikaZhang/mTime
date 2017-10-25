@@ -29,7 +29,7 @@
                             <h3>即将上映({{$store. state.hotLists.totalComingMovie}})</h3>
                             <span></span>
                         </header>
-                        <scroll class="wrapper" :scrollX="scrollX" :scrollY="false">
+                        <scroll class="wrapper" :scrollX="scrollX" :scrollY="false" ref='refresh'>
                             <div class="box1">
                                 <div class="box1-item" v-for="soonList,index in soonLists.moviecomings" v-if="index<=10">
                                     <img :src="soonList.image" @click="$router.push({name:'Detail', params:{id:soonList.id}})">
@@ -68,6 +68,7 @@ export default {
 
     },
     mounted() {
+        
         let cityId=this.$store.state.chooseCityId
         console.log(cityId)
         this.$store.commit('bottomNavFn', "index")
@@ -77,7 +78,9 @@ export default {
             setTimeout(() => {
                 this.$store.commit('loadingFn', false);
             }, 1000)
-
+            // setTimeout(()=>{
+            //     console.log(this.$refs.refresh.refresh)
+            // },1200)
         })
 
 

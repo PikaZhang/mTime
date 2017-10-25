@@ -7,7 +7,7 @@
                 <ul class="hotList">
                     <li v-for="hotList in $store.state.hotLists.ms" @click="$router.push({name:'Detail', params:{id:hotList.id}})">
                         <!-- <router-link  class="Mclick" :to="{name:'Detail',params:{id:hotList.id}}"> -->
-                        <img :src=hotList.img class="hotImg">
+                        <img v-lazy=hotList.img class="hotImg">
                         <div class="hotContent">
                             <h3>{{hotList.t}}
                                 <span class="score" v-if="hotList.r!=-1">{{hotList.r|format}}</span>
@@ -19,7 +19,6 @@
                             </p>
                             <p class="movieTotal">
                                 <span>{{hotList.cC}}家影院上映{{hotList.NearestShowtimeCount}}场</span>
-                                <span class="buy">购票</span>
                             </p>
 
                         </div>

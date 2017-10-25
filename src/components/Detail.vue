@@ -187,16 +187,16 @@
   </div>
 </template>
 <script>
-import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
-import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
-import formatSoon from '@/filters/formatSoon.js'
-import formatDate from '@/filters/formatDate.js'
-import strLength from '@/filters/strLength.js'
-import format from '@/filters/format.js'
-import praise from '@/filters/praise.js'
-import BScroll from 'better-scroll'
-import { mapState } from 'vuex'
-import Scroll from '@/components/Scroll.vue'
+import PacmanLoader from "vue-spinner/src/PacmanLoader.vue";
+import ClipLoader from "vue-spinner/src/ClipLoader.vue";
+import formatSoon from "@/filters/formatSoon.js";
+import formatDate from "@/filters/formatDate.js";
+import strLength from "@/filters/strLength.js";
+import format from "@/filters/format.js";
+import praise from "@/filters/praise.js";
+import BScroll from "better-scroll";
+import { mapState } from "vuex";
+import Scroll from "@/components/Scroll.vue";
 
 export default {
   data() {
@@ -207,76 +207,76 @@ export default {
       isStar: true,
       isFix: true,
       dialog: false
-    }
+    };
   },
   mounted() {
-  
     let detailObj = {};
-    let id = this.$route.params.id
+    let id = this.$route.params.id;
     detailObj.id = this.$route.params.id;
-    detailObj.cityId = this.$store.state.chooseCityId
-    let fixBuy = this.$refs.fixBuy
-    let fixBuyHeihgt = fixBuy.getBoundingClientRect().top
-    this.$store.commit('loadingFn', true);
-    this.$store.commit('bottomNavFn', "hot")
-    this.$store.dispatch('getDetails', detailObj).then(() => {
+    detailObj.cityId = this.$store.state.chooseCityId;
+    let fixBuy = this.$refs.fixBuy;
+    let fixBuyHeihgt = fixBuy.getBoundingClientRect().top;
+    this.$store.commit("loadingFn", true);
+    this.$store.commit("bottomNavFn", "hot");
+    this.$store.dispatch("getDetails", detailObj).then(() => {
       setTimeout(() => {
-        this.$store.commit('loadingFn', false);
-      }, 1000)
+        this.$store.commit("loadingFn", false);
+      }, 1000);
       setTimeout(() => {
         if (!this.scroll) {
           this.scroll = new BScroll(this.$refs.detailwrap, {
             click: true,
             probeType: 3
-          })
-          this.scroll.on('scroll', () => {
+          });
+          this.scroll.on("scroll", () => {
             if (this.scroll.y < -fixBuyHeihgt) {
-
               this.isFix = false;
             } else {
               this.isFix = true;
             }
-          })
-          this.scroll.on('scrollEnd', () => {
+          });
+          this.scroll.on("scrollEnd", () => {
             // 滚动到底部
 
-            if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
-              this.pullupLoading = true
-              this.$refs.loading.innerText = ''
+            if (this.scroll.y <= this.scroll.maxScrollY + 50) {
+              this.pullupLoading = true;
+              this.$refs.loading.innerText = "";
               setTimeout(() => {
                 this.pageCount++;
-                fetch('/api/Showtime/HotMovieComments.api?pageIndex=' + this.pageCount + '&movieId=' + id)
+                fetch(
+                  "/api/Showtime/HotMovieComments.api?pageIndex=" +
+                    this.pageCount +
+                    "&movieId=" +
+                    id
+                )
                   .then(response => {
                     return response.json();
                   })
                   .then(result => {
-                    let data = result.data.cts
-                    if (data == '') {
-                      this.pullupLoading = false
-                      this.$refs.loading.innerText = "没有更多数据了"
+                    let data = result.data.cts;
+                    if (data == "") {
+                      this.pullupLoading = false;
+                      this.$refs.loading.innerText = "没有更多数据了";
                     } else {
-                      this.$store.state.commentMini.cts = this.$store.state.commentMini.cts.concat(data)
-                      this.pullupLoading = false
-
+                      this.$store.state.commentMini.cts = this.$store.state.commentMini.cts.concat(
+                        data
+                      );
+                      this.pullupLoading = false;
                     }
 
                     //等DOM渲染完成再重新计算高度
                     setTimeout(() => {
-                      this.scroll.refresh()
-                    }, 200)
+                      this.scroll.refresh();
+                    }, 200);
                   });
-              }, 1000)
+              }, 1000);
             }
-
-          })
-
-
+          });
         }
-      }, 1000)
-    })
-    this.$store.dispatch('getCommentsPlus', id)
-    this.$store.dispatch('getCommentsMini', id)
-
+      }, 1000);
+    });
+    this.$store.dispatch("getCommentsPlus", id);
+    this.$store.dispatch("getCommentsMini", id);
   },
   filters: {
     formatDate,
@@ -289,9 +289,16 @@ export default {
   methods: {
     showContent() {
       this.showCon = false;
+      setTimeout(() => {
+        this.scroll.refresh();
+        
+      }, 50);
     },
     showContent2() {
       this.showCon = true;
+      setTimeout(() => {
+        this.scroll.refresh();
+      }, 50);
     },
     back() {
       this.$router.go(-1);
@@ -299,10 +306,10 @@ export default {
     star() {
       let collection = [];
 
-      if (window.sessionStorage.getItem('loginStatus') == "true") {
+      if (window.sessionStorage.getItem("loginStatus") == "true") {
         if (this.isStar) {
-          this.$store.commit('collectFn', this.$store.state.details.titleCn)
-          var arr = this.$store.state.collection
+          this.$store.commit("collectFn", this.$store.state.details.titleCn);
+          var arr = this.$store.state.collection;
           //去除重复名字
           for (var i = 0; i < arr.length; i++) {
             for (var j = i + 1; j < arr.length; j++) {
@@ -311,41 +318,32 @@ export default {
               }
             }
           }
-          window.sessionStorage.setItem(this.$store.state.nickname, arr)
+          window.sessionStorage.setItem(this.$store.state.nickname, arr);
         } else {
-
         }
-        this.isStar = !this.isStar
-
-
+        this.isStar = !this.isStar;
       } else {
-
       }
     },
     loginStatus() {
-      return window.sessionStorage.getItem('loginStatus') == "true"
+      return window.sessionStorage.getItem("loginStatus") == "true";
     },
     open() {
-      this.dialog = true
+      this.dialog = true;
     },
     close() {
-      this.dialog = false
+      this.dialog = false;
     }
   },
-  computed: mapState([
-    'details',
-    'commentPlus',
-    'commentMini',
-    'loading'
-  ]),
+  computed: mapState(["details", "commentPlus", "commentMini", "loading"]),
   components: {
     PacmanLoader,
     Scroll,
     ClipLoader
   }
-}
+};
 </script>
 
 <style lang="less">
-@import '../assets/css/detail.less';
+@import "../assets/css/detail.less";
 </style>

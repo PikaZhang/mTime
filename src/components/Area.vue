@@ -105,7 +105,7 @@ export default {
     height: 170/@r;
 }
 .vux-header .vux-header-left span:nth-of-type(1){
-    margin-left:0.7rem;
+    margin-left:0.4rem;
 }
 .vux-header .vux-header-title>span{
     margin-left:0.2rem;
@@ -120,10 +120,12 @@ export default {
 }
 
 .v-spinner {
-    position: absolute;
-    left: 530/@r;
-    top: 900/@r;
+    position: absolute!important;
+    left: 50%;
+    top: 50%;
     z-index: 10;
+    margin-top:-25/@r;
+    margin-left: -100/@r;
 }
 
 .hotCity {

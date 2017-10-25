@@ -11,7 +11,9 @@ import VueScroller from 'vue-scroller'
 Vue.use(VueScroller)
 
 
+import VueLazyload from 'vue-lazyload'
 
+Vue.use(VueLazyload)
 
 
 const FastClick = require('fastclick')

@@ -11,7 +11,7 @@
                     <scroll class="commonSoonWrapper" :scrollX="scrollX">
                         <div class="box1" ref="box1">
                             <div class="box1-item" v-for="attention,index in soonLists.attention" v-if="index<=10" @click="$router.push({name:'Detail', params:{id:attention.id}})" ref="boxItem">
-                                <img :src="attention.image">
+                                <img v-lazy="attention.image">
                                 <div class="commonContent">
                                     <h3>{{attention.title}}</h3>
                                     <p>
@@ -38,7 +38,7 @@
                             <ul class="comingList">
                                 <li v-for="moviecoming in soonLists.moviecomings"  @click="$router.push({name:'Detail', params:{id:moviecoming.id}})">
                                     <!-- <span>{{moviecoming.rMonth}}.{{moviecoming.rDay}}</span> -->
-                                    <img :src="moviecoming.image">
+                                    <img v-lazy="moviecoming.image">
                                     <div class="commonContent">
                                         <h3>{{moviecoming.title}}</h3>
                                         <p>
